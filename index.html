@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Dashboard de ROI - Gestão de Tráfego</title>
+    <title>ROI MASTER - Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap"
@@ -14,121 +14,125 @@
             --primary-dark: #E65100;
             --success: #00E676;
             --danger: #FF1744;
-            --dark: #121212;
-            --dark-surface: #1E1E1E;
-            --dark-border: #333;
-            --text-main: #E0E0E0;
-            --text-muted: #999;
+            --dark: #0f0f0f;
+            --dark-surface: #1a1a1a;
+            --dark-border: #2a2a2a;
+            --text-main: #f0f0f0;
+            --text-muted: #888;
             --white: #ffffff;
         }
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
             font-family: 'Outfit', sans-serif;
             background-color: var(--dark);
             color: var(--text-main);
-            line-height: 1.6;
+            line-height: 1.4;
             overflow-x: hidden;
             width: 100%;
         }
         /* HEADER */
         header {
-            background: linear-gradient(135deg, var(--dark-surface) 0%, #111 100%);
-            padding: 15px 20px;
+            background: var(--dark-surface);
+            padding: 12px 20px;
             border-bottom: 1px solid var(--dark-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 1000;
         }
         .logo {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 800;
             color: var(--primary);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         .logo span {
             color: var(--white);
         }
-        /* TABS */
-        .tabs-container {
+        .btn-save {
+            background: var(--success);
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        /* NAVIGATION TABS */
+        .nav-scroll {
+            background: #111;
+            padding: 10px 15px;
+            overflow-x: auto;
             display: flex;
             gap: 8px;
-            padding: 15px 20px;
-            background: #181818;
-            overflow-x: auto;
-            white-space: nowrap;
-            -webkit-overflow-scrolling: touch;
+            border-bottom: 1px solid var(--dark-border);
+            scrollbar-width: none;
         }
-        .tabs-container::-webkit-scrollbar {
+        .nav-scroll::-webkit-scrollbar {
             display: none;
         }
-        .tab-btn {
+        .nav-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
             background: var(--dark-surface);
             border: 1px solid var(--dark-border);
             color: var(--text-muted);
-            padding: 8px 18px;
-            border-radius: 10px;
-            cursor: pointer;
             font-weight: 600;
-            transition: all 0.3s;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-        .tab-btn.active {
-            background: var(--primary);
-            color: var(--white);
-            border-color: var(--primary);
-            box-shadow: 0 4px 12px rgba(255, 109, 0, 0.2);
-        }
-        .add-tab {
-            background: transparent;
-            border: 2px dashed var(--dark-border);
-            color: var(--text-muted);
-            padding: 8px 12px;
-            border-radius: 10px;
+            font-size: 0.85rem;
+            white-space: nowrap;
             cursor: pointer;
-            flex-shrink: 0;
+        }
+        .nav-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        .nav-btn.dash-btn {
+            background: #333;
+            color: white;
+        }
+        .nav-btn.dash-btn.active {
+            background: #555;
         }
         /* MAIN CONTENT */
-        .main-layout {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            gap: 20px;
-            padding: 20px;
-            max-width: 1400px;
+        .container {
+            padding: 15px;
+            max-width: 1200px;
             margin: 0 auto;
         }
-        /* SUMMARY CARDS */
+        /* DASHBOARD VIEW */
         .summary-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
         }
         .card {
             background: var(--dark-surface);
-            padding: 20px;
-            border-radius: 16px;
+            padding: 15px;
+            border-radius: 12px;
             border: 1px solid var(--dark-border);
-            transition: transform 0.3s;
         }
         .card-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             text-transform: uppercase;
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
         .card-value {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 800;
         }
         .card-value.profit {
@@ -137,179 +141,114 @@
         .card-value.expense {
             color: var(--danger);
         }
-        /* TABLE AREA */
-        .table-container {
+        /* FIXED EXPENSES & GOAL (DASH ONLY) */
+        .dash-section {
             background: var(--dark-surface);
-            border-radius: 16px;
+            border-radius: 12px;
             border: 1px solid var(--dark-border);
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin-bottom: 15px;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Inter', sans-serif;
-            min-width: 700px;
-        }
-        thead th {
-            background: var(--primary);
-            color: var(--white);
-            text-align: left;
-            padding: 12px 15px;
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 0.75rem;
-        }
-        tbody td {
-            padding: 10px 15px;
-            border-bottom: 1px solid var(--dark-border);
-            font-size: 0.9rem;
-        }
-        input {
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-main);
-            width: 100%;
-            padding: 4px;
-            border-radius: 4px;
-            font-family: inherit;
-            font-size: inherit;
-        }
-        input:focus {
-            border-color: var(--primary);
-            outline: none;
-            background: rgba(255, 109, 0, 0.05);
-        }
-        .table-footer {
-            background: #111;
-            font-weight: 800;
-        }
-        .table-footer td {
             padding: 15px;
-            border-top: 2px solid var(--dark-border);
-        }
-        /* SIDEBAR */
-        .sidebar {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        .fixed-expenses-box {
-            background: var(--dark-surface);
-            border-radius: 16px;
-            border: 1px solid var(--dark-border);
-            padding: 20px;
-        }
-        .fixed-title {
-            background: var(--danger);
-            color: var(--white);
-            padding: 8px;
-            border-radius: 8px;
-            font-weight: 800;
-            text-align: center;
             margin-bottom: 15px;
-            text-transform: uppercase;
+        }
+        .section-title {
             font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .fixed-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid var(--dark-border);
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
         }
-        .total-fixed {
-            background: var(--danger);
-            color: var(--white);
-            padding: 12px;
-            border-radius: 8px;
-            text-align: center;
+        .fixed-item input {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 0.85rem;
+            width: 50%;
+        }
+        .fixed-item input.val {
+            text-align: right;
+            width: 40%;
+            font-weight: 700;
+        }
+        .goal-progress-container {
             margin-top: 10px;
-            font-weight: 800;
         }
-        /* GOAL BOX */
-        .goal-box {
-            background: #111;
-            padding: 20px;
-            border-radius: 16px;
-            border: 1px solid var(--dark-border);
-        }
-        .goal-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 12px;
-            font-size: 0.9rem;
-        }
-        .progress-bar {
+        .progress-bg {
             height: 10px;
             background: #333;
-            border-radius: 10px;
+            border-radius: 5px;
             overflow: hidden;
-            margin-bottom: 8px;
+            margin: 10px 0;
         }
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), var(--success));
             width: 0%;
-            transition: width 0.5s ease;
+            transition: width 0.5s;
         }
-        /* BUTTONS */
-        .btn-save {
-            background: var(--success);
-            color: var(--dark);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: 0.3s;
+        /* ACCOUNT VIEW (TABLE) */
+        .table-wrapper {
+            background: var(--dark-surface);
+            border-radius: 12px;
+            border: 1px solid var(--dark-border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+        thead th {
+            background: var(--primary);
+            color: white;
+            text-align: left;
+            padding: 10px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+        }
+        tbody td {
+            padding: 10px;
+            border-bottom: 1px solid #222;
             font-size: 0.85rem;
         }
-        /* MOBILE RESPONSIVE */
-        @media (max-width: 1100px) {
-            .main-layout {
-                grid-template-columns: 1fr;
-                padding: 15px;
-            }
-            .summary-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
+        table input {
+            background: transparent;
+            border: none;
+            color: white;
+            width: 100%;
+            font-size: 0.85rem;
         }
-        @media (max-width: 600px) {
-            header {
-                padding: 10px 15px;
+        .btn-add {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px dashed var(--dark-border);
+            color: var(--text-muted);
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        /* UTILS */
+        .hidden {
+            display: none;
+        }
+        @media (min-width: 768px) {
+            .summary-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
             .logo {
-                font-size: 1rem;
+                font-size: 1.4rem;
             }
             .btn-save {
-                padding: 8px 12px;
-                font-size: 0.75rem;
-            }
-            .summary-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-            }
-            .card {
-                padding: 12px;
-            }
-            .card-value {
-                font-size: 1.1rem;
-            }
-            .main-layout {
-                padding: 10px;
-            }
-            .table-container {
-                border-radius: 10px;
-            }
-            table {
-                min-width: 650px;
-            }
-            thead th,
-            tbody td {
-                padding: 8px 10px;
-                font-size: 0.75rem;
+                font-size: 0.85rem;
             }
         }
     </style>
@@ -317,239 +256,236 @@
 <body>
     <header>
         <div class="logo">🚀 ROI<span>MASTER</span></div>
-        <button class="btn-save" onclick="saveData()">SALVAR DADOS</button>
+        <button class="btn-save" onclick="saveData()">Salvar Dados</button>
     </header>
-    <div class="tabs-container" id="tabsList">
-        <!-- Tabs will be generated here -->
+    <div class="nav-scroll" id="navTabs">
+        <!-- Tabs will be injected here -->
     </div>
-    <div class="main-layout">
-        <div class="content-area">
-            <!-- SUMMARY -->
+    <div class="container">
+        <!-- VIEW: DASHBOARD -->
+        <div id="viewDash" class="view">
             <div class="summary-grid">
                 <div class="card">
                     <div class="card-label">Gasto Total</div>
-                    <div class="card-value expense" id="sumExpenses">R$ 0,00</div>
+                    <div class="card-value expense" id="dashTotalSpend">R$ 0</div>
                 </div>
                 <div class="card">
-                    <div class="card-label">Receita Total</div>
-                    <div class="card-value" id="sumRevenue">R$ 0,00</div>
+                    <div class="card-label">Receita</div>
+                    <div class="card-value" id="dashTotalEarn">R$ 0</div>
                 </div>
                 <div class="card">
                     <div class="card-label">Lucro Líquido</div>
-                    <div class="card-value profit" id="sumProfit">R$ 0,00</div>
+                    <div class="card-value profit" id="dashNetProfit">R$ 0</div>
                 </div>
                 <div class="card">
                     <div class="card-label">ROI Médio</div>
-                    <div class="card-value" id="avgROI">0.00x</div>
+                    <div class="card-value" id="dashAvgROI">0.00x</div>
                 </div>
             </div>
-            <!-- SPREADSHEET -->
-            <div class="table-container">
+            <div class="dash-section">
+                <div class="section-title" style="color: var(--danger);">🛑 Despesas Fixas</div>
+                <div id="dashFixedList"></div>
+                <button class="btn-add" onclick="addFixedExpense()"
+                    style="border-color: var(--danger); color: var(--danger); padding: 8px; font-size: 0.75rem;">+
+                    Adicionar Gasto Fixo</button>
+                <div style="margin-top: 15px; font-weight: 800; text-align: right; color: var(--danger);"
+                    id="dashFixedTotal">Total: R$ 0</div>
+            </div>
+            <div class="dash-section">
+                <div class="section-title" style="color: var(--primary);">🎯 Meta de Lucro</div>
+                <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                    <span id="dashGoalText">Meta: R$ 5.000</span>
+                    <span id="dashGoalPercent">0%</span>
+                </div>
+                <div class="progress-bg">
+                    <div class="progress-fill" id="dashGoalProgress"></div>
+                </div>
+                <div id="dashGoalDist" style="font-size: 0.8rem; color: var(--text-muted);">Faltam R$ 5.000</div>
+                <input type="number" id="goalInput" placeholder="Alterar Meta" onchange="updateGoal(this.value)"
+                    style="width: 100%; margin-top: 10px; background: #222; border: 1px solid #333; padding: 8px; border-radius: 6px; color: white;">
+            </div>
+        </div>
+        <!-- VIEW: ACCOUNT -->
+        <div id="viewAccount" class="view hidden">
+            <div class="summary-grid" style="grid-template-columns: repeat(2, 1fr); margin-bottom: 15px;">
+                <div class="card" style="padding: 10px;">
+                    <div class="card-label">Gasto Conta</div>
+                    <div class="card-value" id="accSpend" style="font-size: 1rem;">R$ 0</div>
+                </div>
+                <div class="card" style="padding: 10px;">
+                    <div class="card-label">Lucro Conta</div>
+                    <div class="card-value profit" id="accProfit" style="font-size: 1rem;">R$ 0</div>
+                </div>
+            </div>
+            <div class="table-wrapper">
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 70px;">Dia</th>
-                            <th style="width: 100px;">Data</th>
-                            <th>Gastos (R$)</th>
-                            <th>Receita (R$)</th>
-                            <th>Lucro (R$)</th>
-                            <th>ROI</th>
+                            <th style="width: 60px;">Dia</th>
+                            <th style="width: 80px;">Data</th>
+                            <th>Gasto</th>
+                            <th>Receita</th>
+                            <th>Lucro</th>
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Rows will be generated here -->
-                    </tbody>
-                    <tfoot>
-                        <tr class="table-footer">
-                            <td colspan="2">TOTAL</td>
-                            <td id="footExpenses">R$ 0,00</td>
-                            <td id="footRevenue">R$ 0,00</td>
-                            <td id="footProfit" style="color: var(--success);">R$ 0,00</td>
-                            <td id="footROI">0.00</td>
-                        </tr>
-                    </tfoot>
+                    <tbody id="accTableBody"></tbody>
                 </table>
             </div>
-            <button class="tab-btn" onclick="addRow()"
-                style="margin-top: 5px; background: transparent; border-style: dashed; width: 100%;">+ Adicionar
-                Dia</button>
-        </div>
-        <!-- SIDEBAR -->
-        <div class="sidebar">
-            <div class="fixed-expenses-box">
-                <div class="fixed-title">Despesas Fixas</div>
-                <div id="fixedExpensesList">
-                    <!-- Fixed items here -->
-                </div>
-                <div class="total-fixed" id="totalFixed">TOTAL: R$ 0,00</div>
-                <button class="tab-btn" onclick="addFixedExpense()"
-                    style="width: 100%; margin-top: 10px; font-size: 0.8rem;">+ Adicionar Gasto Fixo</button>
-            </div>
-            <div class="goal-box">
-                <div class="goal-header">
-                    <span style="font-weight: 800;">META DE LUCRO</span>
-                    <span id="goalValueText" style="color: var(--primary);">R$ 5.000</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="goalProgress"></div>
-                </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.75rem;">
-                    <span id="distText">Faltam R$ 5.000</span>
-                    <span id="percentText">0%</span>
-                </div>
-                <input type="number" id="goalInput" placeholder="Mudar Meta" onchange="updateGoal(this.value)"
-                    style="margin-top: 12px; background: #222; border: 1px solid #333; padding: 8px; font-size: 0.85rem;">
-            </div>
+            <button class="btn-add" onclick="addRow()">+ Adicionar Dia</button>
+            <button class="btn-add" onclick="deleteAccount()"
+                style="border-color: #444; color: #666; font-size: 0.7rem; margin-top: 30px;">Excluir esta
+                Conta</button>
         </div>
     </div>
     <script>
-        // DATA STRUCTURE
         let state = {
-            activeTab: 0,
-            offers: [
-                {
-                    name: "Oferta 4",
-                    goal: 5000,
-                    rows: [
-                        { day: "Dia 1", date: "22/12", spend: 0, earn: 0 }
-                    ],
-                    fixed: [
-                        { label: "ChatGPT", value: 99 },
-                        { label: "Proxy", value: 30 }
-                    ]
-                },
-                {
-                    name: "Oferta 10",
-                    goal: 10000,
-                    rows: [
-                        { day: "Dia 1", date: "22/12", spend: 0, earn: 0 }
-                    ],
-                    fixed: []
-                }
+            activeView: 'dash', // 'dash' or account index
+            goal: 5000,
+            fixed: [
+                { label: "ChatGPT", value: 99 },
+                { label: "Proxy", value: 30 }
+            ],
+            accounts: [
+                { name: "Conta 1", rows: [{ day: "1", date: "22/12", spend: 0, earn: 0 }] },
+                { name: "Conta 2", rows: [{ day: "1", date: "22/12", spend: 0, earn: 0 }] }
             ]
         };
-        // LOAD FROM LOCALSTORAGE
-        const saved = localStorage.getItem('roi_master_data');
+        // Load
+        const saved = localStorage.getItem('roi_master_v2');
         if (saved) state = JSON.parse(saved);
         function init() {
             renderTabs();
-            renderContent();
+            renderView();
         }
         function renderTabs() {
-            const container = document.getElementById('tabsList');
-            container.innerHTML = state.offers.map((off, idx) => `
-                <button class="tab-btn ${state.activeTab === idx ? 'active' : ''}" onclick="switchTab(${idx})">
-                    ${off.name}
-                </button>
-            `).join('') + `<button class="add-tab" onclick="addOffer()">+</button>`;
+            const container = document.getElementById('navTabs');
+            let html = `<button class="nav-btn dash-btn ${state.activeView === 'dash' ? 'active' : ''}" onclick="setView('dash')">📊 DASHBOARD</button>`;
+            state.accounts.forEach((acc, idx) => {
+                html += `<button class="nav-btn ${state.activeView === idx ? 'active' : ''}" onclick="setView(${idx})">${acc.name}</button>`;
+            });
+            html += `<button class="nav-btn" onclick="addAccount()" style="border-style: dashed;">+</button>`;
+            container.innerHTML = html;
         }
-        function switchTab(idx) {
-            state.activeTab = idx;
+        function setView(v) {
+            state.activeView = v;
             renderTabs();
-            renderContent();
+            renderView();
         }
-        function addOffer() {
-            const name = prompt("Nome da Oferta:");
-            if (name) {
-                state.offers.push({
-                    name: name,
-                    goal: 5000,
-                    rows: [{ day: "Dia 1", date: "", spend: 0, earn: 0 }],
-                    fixed: []
+        function renderView() {
+            if (state.activeView === 'dash') {
+                document.getElementById('viewDash').classList.remove('hidden');
+                document.getElementById('viewAccount').classList.add('hidden');
+                calculateGlobal();
+            } else {
+                document.getElementById('viewDash').classList.add('hidden');
+                document.getElementById('viewAccount').classList.remove('hidden');
+                renderAccount();
+            }
+        }
+        // --- DASHBOARD LOGIC ---
+        function calculateGlobal() {
+            let totalSpend = 0;
+            let totalEarn = 0;
+            state.accounts.forEach(acc => {
+                acc.rows.forEach(r => {
+                    totalSpend += r.spend;
+                    totalEarn += r.earn;
                 });
-                state.activeTab = state.offers.length - 1;
+            });
+            let totalFixed = state.fixed.reduce((acc, f) => acc + f.value, 0);
+            let netProfit = totalEarn - totalSpend - totalFixed;
+            let roi = totalSpend > 0 ? (totalEarn / totalSpend) : 0;
+            document.getElementById('dashTotalSpend').innerText = `R$ ${(totalSpend + totalFixed).toLocaleString('pt-BR')}`;
+            document.getElementById('dashTotalEarn').innerText = `R$ ${totalEarn.toLocaleString('pt-BR')}`;
+            document.getElementById('dashNetProfit').innerText = `R$ ${netProfit.toLocaleString('pt-BR')}`;
+            document.getElementById('dashAvgROI').innerText = `${roi.toFixed(2)}x`;
+            // Fixed List
+            const fixedContainer = document.getElementById('dashFixedList');
+            fixedContainer.innerHTML = state.fixed.map((f, idx) => `
+                <div class="fixed-item">
+                    <input value="${f.label}" onchange="updateFixed(${idx}, 'label', this.value)">
+                    <input type="number" class="val" value="${f.value}" onchange="updateFixed(${idx}, 'value', this.value)">
+                </div>
+            `).join('');
+            document.getElementById('dashFixedTotal').innerText = `Total: R$ ${totalFixed.toLocaleString('pt-BR')}`;
+            // Goal
+            const goal = state.goal;
+            document.getElementById('dashGoalText').innerText = `Meta: R$ ${goal.toLocaleString('pt-BR')}`;
+            let percent = goal > 0 ? Math.min((netProfit / goal) * 100, 100) : 0;
+            if (netProfit < 0) percent = 0;
+            document.getElementById('dashGoalProgress').style.width = `${percent}%`;
+            document.getElementById('dashGoalPercent').innerText = `${percent.toFixed(1)}%`;
+            let dist = goal - netProfit;
+            document.getElementById('dashGoalDist').innerText = dist > 0 ? `Faltam R$ ${dist.toLocaleString('pt-BR')}` : "Meta Batida! 🔥";
+        }
+        function updateFixed(idx, field, val) {
+            if (field === 'value') val = parseFloat(val) || 0;
+            state.fixed[idx][field] = val;
+            calculateGlobal();
+        }
+        function addFixedExpense() {
+            state.fixed.push({ label: "Novo Gasto", value: 0 });
+            calculateGlobal();
+        }
+        function updateGoal(val) {
+            state.goal = parseFloat(val) || 0;
+            calculateGlobal();
+        }
+        // --- ACCOUNT LOGIC ---
+        function renderAccount() {
+            const acc = state.accounts[state.activeView];
+            const tbody = document.getElementById('accTableBody');
+            let accSpend = 0;
+            let accEarn = 0;
+            tbody.innerHTML = acc.rows.map((r, idx) => {
+                accSpend += r.spend;
+                accEarn += r.earn;
+                return `
+                    <tr>
+                        <td><input value="${r.day}" onchange="updateRow(${idx}, 'day', this.value)"></td>
+                        <td><input value="${r.date}" onchange="updateRow(${idx}, 'date', this.value)"></td>
+                        <td><input type="number" value="${r.spend}" onchange="updateRow(${idx}, 'spend', this.value)"></td>
+                        <td><input type="number" value="${r.earn}" onchange="updateRow(${idx}, 'earn', this.value)"></td>
+                        <td style="font-weight:700; color: ${r.earn - r.spend >= 0 ? 'var(--success)' : 'var(--danger)'}">
+                            ${(r.earn - r.spend).toLocaleString('pt-BR')}
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            document.getElementById('accSpend').innerText = `R$ ${accSpend.toLocaleString('pt-BR')}`;
+            document.getElementById('accProfit').innerText = `R$ ${(accEarn - accSpend).toLocaleString('pt-BR')}`;
+        }
+        function updateRow(idx, field, val) {
+            const acc = state.accounts[state.activeView];
+            if (field === 'spend' || field === 'earn') val = parseFloat(val) || 0;
+            acc.rows[idx][field] = val;
+            renderAccount();
+        }
+        function addRow() {
+            const acc = state.accounts[state.activeView];
+            acc.rows.push({ day: (acc.rows.length + 1).toString(), date: "", spend: 0, earn: 0 });
+            renderAccount();
+        }
+        function addAccount() {
+            const name = prompt("Nome da Conta (ex: Conta 01):");
+            if (name) {
+                state.accounts.push({ name: name, rows: [{ day: "1", date: "", spend: 0, earn: 0 }] });
+                state.activeView = state.accounts.length - 1;
                 init();
             }
         }
-        function renderContent() {
-            const offer = state.offers[state.activeTab];
-            const tbody = document.getElementById('tableBody');
-            // Render Rows
-            tbody.innerHTML = offer.rows.map((row, idx) => `
-                <tr>
-                    <td><input value="${row.day}" onchange="updateRow(${idx}, 'day', this.value)"></td>
-                    <td><input value="${row.date}" onchange="updateRow(${idx}, 'date', this.value)"></td>
-                    <td><input type="number" value="${row.spend}" onchange="updateRow(${idx}, 'spend', this.value)"></td>
-                    <td><input type="number" value="${row.earn}" onchange="updateRow(${idx}, 'earn', this.value)"></td>
-                    <td style="font-weight: 700; color: ${row.earn - row.spend >= 0 ? 'var(--success)' : 'var(--danger)'}">
-                        R$ ${(row.earn - row.spend).toLocaleString('pt-BR')}
-                    </td>
-                    <td style="font-weight: 700;">
-                        ${row.spend > 0 ? (row.earn / row.spend).toFixed(2) : '0.00'}
-                    </td>
-                </tr>
-            `).join('');
-            // Render Fixed
-            const fixedList = document.getElementById('fixedExpensesList');
-            fixedList.innerHTML = offer.fixed.map((f, idx) => `
-                <div class="fixed-item">
-                    <input value="${f.label}" onchange="updateFixed(${idx}, 'label', this.value)" style="width: 60%; font-size: 0.8rem;">
-                    <input type="number" value="${f.value}" onchange="updateFixed(${idx}, 'value', this.value)" style="width: 30%; font-size: 0.8rem; text-align: right;">
-                </div>
-            `).join('');
-            calculateTotals();
-        }
-        function updateRow(idx, field, val) {
-            const offer = state.offers[state.activeTab];
-            if (field === 'spend' || field === 'earn') val = parseFloat(val) || 0;
-            offer.rows[idx][field] = val;
-            renderContent();
-        }
-        function addRow() {
-            const offer = state.offers[state.activeTab];
-            offer.rows.push({ day: `Dia ${offer.rows.length + 1}`, date: "", spend: 0, earn: 0 });
-            renderContent();
-        }
-        function updateFixed(idx, field, val) {
-            const offer = state.offers[state.activeTab];
-            if (field === 'value') val = parseFloat(val) || 0;
-            offer.fixed[idx][field] = val;
-            renderContent();
-        }
-        function addFixedExpense() {
-            state.offers[state.activeTab].fixed.push({ label: "Novo Gasto", value: 0 });
-            renderContent();
-        }
-        function updateGoal(val) {
-            state.offers[state.activeTab].goal = parseFloat(val) || 0;
-            renderContent();
-        }
-        function calculateTotals() {
-            const offer = state.offers[state.activeTab];
-            let totalSpend = offer.rows.reduce((acc, r) => acc + r.spend, 0);
-            let totalEarn = offer.rows.reduce((acc, r) => acc + r.earn, 0);
-            let totalFixed = offer.fixed.reduce((acc, f) => acc + f.value, 0);
-            let netProfit = totalEarn - totalSpend - totalFixed;
-            let roi = totalSpend > 0 ? (totalEarn / totalSpend) : 0;
-            // Update Cards
-            document.getElementById('sumExpenses').innerText = `R$ ${(totalSpend + totalFixed).toLocaleString('pt-BR')}`;
-            document.getElementById('sumRevenue').innerText = `R$ ${totalEarn.toLocaleString('pt-BR')}`;
-            document.getElementById('sumProfit').innerText = `R$ ${netProfit.toLocaleString('pt-BR')}`;
-            document.getElementById('avgROI').innerText = `${roi.toFixed(2)}x`;
-            // Update Table Footer
-            document.getElementById('footExpenses').innerText = `R$ ${totalSpend.toLocaleString('pt-BR')}`;
-            document.getElementById('footRevenue').innerText = `R$ ${totalEarn.toLocaleString('pt-BR')}`;
-            document.getElementById('footProfit').innerText = `R$ ${(totalEarn - totalSpend).toLocaleString('pt-BR')}`;
-            document.getElementById('footROI').innerText = roi.toFixed(2);
-            // Update Fixed Total
-            document.getElementById('totalFixed').innerText = `TOTAL: R$ ${totalFixed.toLocaleString('pt-BR')}`;
-            // Update Goal
-            const goal = offer.goal;
-            document.getElementById('goalValueText').innerText = `R$ ${goal.toLocaleString('pt-BR')}`;
-            let percent = goal > 0 ? Math.min((netProfit / goal) * 100, 100) : 0;
-            if (netProfit < 0) percent = 0;
-            document.getElementById('goalProgress').style.width = `${percent}%`;
-            document.getElementById('percentText').innerText = `${percent.toFixed(1)}%`;
-            let dist = goal - netProfit;
-            document.getElementById('distText').innerText = dist > 0 ? `Faltam R$ ${dist.toLocaleString('pt-BR')}` : "Meta Batida! 🔥";
+        function deleteAccount() {
+            if (confirm("Tem certeza que deseja excluir esta conta?")) {
+                state.accounts.splice(state.activeView, 1);
+                state.activeView = 'dash';
+                init();
+            }
         }
         function saveData() {
-            localStorage.setItem('roi_master_data', JSON.stringify(state));
-            alert("Dados salvos com sucesso no seu navegador!");
+            localStorage.setItem('roi_master_v2', JSON.stringify(state));
+            alert("Dados salvos com sucesso!");
         }
         init();
     </script>
 </body>
 </html>
-
-
