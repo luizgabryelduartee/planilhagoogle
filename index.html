@@ -138,6 +138,22 @@
             border-radius: 10px;
             font-weight: 800;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .save-badge {
+            font-size: 0.65rem;
+            background: rgba(0, 230, 118, 0.1);
+            color: var(--success);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-weight: 700;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .save-badge.show {
+            opacity: 1;
         }
         /* STATS */
         .stats-grid {
@@ -334,7 +350,7 @@
     <div class="mobile-header">
         <button class="btn-menu-toggle" onclick="toggleSidebar()">☰</button>
         <div class="logo">🚀 ROI<span>MASTER</span></div>
-        <button class="btn-save" onclick="saveData()" style="padding: 6px 12px; font-size: 0.7rem;">SALVAR</button>
+        <div id="save-indicator-mob" class="save-badge">SALVO</div>
     </div>
     <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
@@ -362,7 +378,10 @@
         <div id="view-dash">
             <div class="page-header">
                 <h1 style="font-weight: 800;">Visão Geral</h1>
-                <button class="btn-save" onclick="saveData()">SALVAR TUDO</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="save-indicator" class="save-badge">SINCRONIZADO</div>
+                    <button class="btn-save" onclick="saveData()">SALVAR AGORA</button>
+                </div>
             </div>
             <div class="stats-grid">
                 <div class="stat-card">
@@ -408,7 +427,10 @@
         <div id="view-project" class="hidden">
             <div class="page-header">
                 <h1 id="project-title-display" style="font-weight: 800;">Projeto</h1>
-                <button class="btn-save" onclick="saveData()">SALVAR TUDO</button>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div id="save-indicator-proj" class="save-badge">SINCRONIZADO</div>
+                    <button class="btn-save" onclick="saveData()">SALVAR AGORA</button>
+                </div>
             </div>
             <div class="project-grid">
                 <div class="left-col">
@@ -532,8 +554,8 @@
             document.getElementById('g-roi').innerText = `${roi.toFixed(2)}x`;
             document.getElementById('fixed-list').innerHTML = state.fixed.map((f, i) => `
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <input value="${f.label}" onchange="state.fixed[${i}].label=this.value;renderDash()" style="background:none;border:none;color:#888;font-size:0.8rem;width:60%">
-                    <input type="number" value="${f.value}" onchange="state.fixed[${i}].value=parseFloat(this.value)||0;renderDash()" style="background:none;border:none;color:var(--danger);font-weight:800;text-align:right;width:30%">
+                    <input value="${f.label}" onchange="state.fixed[${i}].label=this.value;renderDash();autoSave()" style="background:none;border:none;color:#888;font-size:0.8rem;width:60%">
+                    <input type="number" value="${f.value}" onchange="state.fixed[${i}].value=parseFloat(this.value)||0;renderDash();autoSave()" style="background:none;border:none;color:var(--danger);font-weight:800;text-align:right;width:30%">
                 </div>
             `).join('');
             document.getElementById('goal-label').innerText = `Meta: R$ ${state.goal.toLocaleString('pt-BR')}`;
@@ -573,21 +595,39 @@
                 `).join('');
             } else { accContent.classList.add('hidden'); }
         }
-        function updateNotes(v) { state.projects[state.activeView].notes = v; }
-        function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; }
-        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderProject(); renderSidebar(); }
+        function updateNotes(v) { state.projects[state.activeView].notes = v; autoSave(); }
+        function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; autoSave(); }
+        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderProject(); renderSidebar(); autoSave(); }
         function updateRow(i, f, v) {
             const acc = state.projects[state.activeView].accounts[state.activeAcc];
             acc.rows[i][f] = (f === 'spend' || f === 'earn') ? parseFloat(v) || 0 : v;
             renderProject();
+            autoSave();
         }
-        function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); }
-        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); }
-        function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", creds: { name: "", email: "", pass: "" }, accounts: [] }); state.activeView = state.projects.length - 1; render(); } }
-        function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); } }
-        function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); }
-        function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); }
-        function saveData() { localStorage.setItem('roi_master_v5', JSON.stringify(state)); alert("Salvo com sucesso! 🚀"); }
+        function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); autoSave(); }
+        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
+        function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", creds: { name: "", email: "", pass: "" }, accounts: [] }); state.activeView = state.projects.length - 1; render(); autoSave(); } }
+        function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); autoSave(); } }
+        function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); autoSave(); }
+        function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); autoSave(); }
+        function autoSave() {
+            localStorage.setItem('roi_master_v5', JSON.stringify(state));
+            showSaveIndicator();
+        }
+        function showSaveIndicator() {
+            const indicators = ['save-indicator', 'save-indicator-proj', 'save-indicator-mob'];
+            indicators.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('show');
+                    setTimeout(() => el.classList.remove('show'), 2000);
+                }
+            });
+        }
+        function saveData() {
+            localStorage.setItem('roi_master_v5', JSON.stringify(state));
+            alert("Dados sincronizados com sucesso! 🚀");
+        }
         init();
     </script>
 </body>
