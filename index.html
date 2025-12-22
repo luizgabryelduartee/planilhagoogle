@@ -14,12 +14,12 @@
             --primary-light: #FF9E40;
             --success: #00E676;
             --danger: #FF1744;
-            --bg: #080808;
-            --surface: #121212;
-            --surface-light: #1e1e1e;
-            --border: #282828;
-            --text: #ffffff;
-            --text-dim: #a0a0a0;
+            --bg: #0d0d0d;
+            --surface: #171717;
+            --surface-light: #212121;
+            --border: #2f2f2f;
+            --text: #ececec;
+            --text-dim: #b4b4b4;
             --sidebar-width: 260px;
         }
         * {
@@ -36,42 +36,86 @@
             display: flex;
             min-height: 100vh;
         }
-        /* SIDEBAR (Desktop) */
+        /* SIDEBAR (ChatGPT Style) */
         .sidebar {
             width: var(--sidebar-width);
-            background: var(--surface);
+            background: var(--bg);
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 30px 20px;
+            padding: 10px;
             position: fixed;
             height: 100vh;
             z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 10px;
+            margin-bottom: 10px;
         }
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--primary);
-            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-new-project {
+            width: 100%;
+            padding: 12px;
+            background: transparent;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 10px;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .btn-new-project:hover {
+            background: var(--surface);
+        }
+        .sidebar-menu {
+            flex: 1;
+            overflow-y: auto;
+            margin-top: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) transparent;
+        }
+        .menu-section-title {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-weight: 800;
+            text-transform: uppercase;
+            padding: 15px 10px 5px;
+            letter-spacing: 1px;
         }
         .menu-item {
-            padding: 14px 18px;
-            border-radius: 12px;
-            color: var(--text-dim);
-            font-weight: 600;
-            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
+            gap: 10px;
+            margin-bottom: 2px;
+            transition: background 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .menu-item:hover {
+            background: var(--surface);
         }
         .menu-item.active {
-            background: rgba(255, 109, 0, 0.1);
-            color: var(--primary);
+            background: var(--surface-light);
+            font-weight: 700;
         }
         /* MAIN CONTENT */
         .main-content {
@@ -94,32 +138,6 @@
             border-radius: 10px;
             font-weight: 800;
             cursor: pointer;
-        }
-        /* TABS (Projects) */
-        .tabs-scroll {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 15px;
-            scrollbar-width: none;
-        }
-        .tabs-scroll::-webkit-scrollbar {
-            display: none;
-        }
-        .tab-pill {
-            padding: 10px 20px;
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 30px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            color: var(--text-dim);
-        }
-        .tab-pill.active {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
         }
         /* STATS */
         .stats-grid {
@@ -152,157 +170,158 @@
             color: var(--danger);
         }
         /* PROJECT VIEW */
-        .project-container {
-            display: flex;
-            flex-direction: column;
+        .project-grid {
+            display: grid;
+            grid-template-columns: 1fr 350px;
             gap: 20px;
         }
-        .notes-area {
+        .card-box {
             background: var(--surface);
             border-radius: 16px;
             border: 1px solid var(--border);
             padding: 20px;
+            margin-bottom: 20px;
         }
-        .notes-area textarea {
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        textarea {
             width: 100%;
-            height: 100px;
+            height: 120px;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 10px;
             color: white;
-            padding: 15px;
+            padding: 12px;
             font-family: inherit;
             resize: none;
-            margin-top: 10px;
         }
-        /* ADS ACCOUNTS */
-        .accounts-section {
-            background: var(--surface);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            padding: 20px;
-        }
-        .acc-pills-container {
+        /* CREDENTIALS BLOCK */
+        .credentials-block {
             display: flex;
+            flex-direction: column;
             gap: 10px;
-            margin-bottom: 20px;
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+        }
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .field label {
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .field input {
+            background: #1a1a1a;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 6px;
+            color: white;
+            font-size: 0.85rem;
+        }
+        /* ACCOUNTS TABS */
+        .acc-tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
             overflow-x: auto;
             padding-bottom: 5px;
         }
-        .acc-pill {
+        .acc-tab {
             padding: 8px 16px;
             background: var(--bg);
             border: 1px solid var(--border);
             border-radius: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 600;
             cursor: pointer;
             color: var(--text-dim);
+            white-space: nowrap;
         }
-        .acc-pill.active {
+        .acc-tab.active {
             border-color: var(--primary);
             color: var(--primary);
             background: rgba(255, 109, 0, 0.05);
         }
-        /* CREDENTIALS */
-        .credentials-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-            background: var(--bg);
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-        }
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-        .field-group label {
-            font-size: 0.7rem;
-            color: var(--text-dim);
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        .field-group input {
-            background: #1a1a1a;
-            border: 1px solid var(--border);
-            padding: 10px;
-            border-radius: 8px;
-            color: white;
-            font-size: 0.9rem;
-        }
         /* TABLE */
         .table-wrapper {
             overflow-x: auto;
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid var(--border);
         }
         table {
             width: 100%;
             border-collapse: collapse;
-            min-width: 600px;
+            min-width: 500px;
         }
         thead th {
             background: #1a1a1a;
-            padding: 12px;
+            padding: 10px;
             text-align: left;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-dim);
             text-transform: uppercase;
         }
         tbody td {
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-bottom: 1px solid var(--border);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
         table input {
             background: transparent;
             border: none;
             color: white;
             width: 100%;
+            font-size: 0.8rem;
         }
-        /* MOBILE NAV */
-        .mobile-nav {
+        /* MOBILE NAVIGATION */
+        .mobile-header {
             display: none;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
             background: var(--surface);
-            border-top: 1px solid var(--border);
-            padding: 10px 0;
-            justify-content: space-around;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
             z-index: 2000;
-            padding-bottom: calc(10px + env(safe-area-inset-bottom));
-        }
-        .mob-nav-item {
-            display: flex;
-            flex-direction: column;
+            justify-content: space-between;
             align-items: center;
-            gap: 4px;
-            color: var(--text-dim);
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-decoration: none;
         }
-        .mob-nav-item.active {
-            color: var(--primary);
+        .btn-menu-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
         }
         @media (max-width: 1024px) {
             .sidebar {
-                display: none;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
             }
             .main-content {
                 margin-left: 0;
                 width: 100%;
                 padding: 15px;
-                padding-bottom: 100px;
             }
-            .mobile-nav {
+            .mobile-header {
                 display: flex;
+            }
+            .project-grid {
+                grid-template-columns: 1fr;
             }
         }
         .hidden {
@@ -311,22 +330,36 @@
     </style>
 </head>
 <body>
-    <!-- SIDEBAR -->
-    <div class="sidebar">
+    <!-- MOBILE HEADER -->
+    <div class="mobile-header">
+        <button class="btn-menu-toggle" onclick="toggleSidebar()">☰</button>
         <div class="logo">🚀 ROI<span>MASTER</span></div>
-        <div class="menu-item active" id="side-dash" onclick="switchPage('dash')">📊 Dashboard</div>
-        <div class="menu-item" id="side-projects" onclick="switchPage('projects')">📁 Projetos</div>
+        <button class="btn-save" onclick="saveData()" style="padding: 6px 12px; font-size: 0.7rem;">SALVAR</button>
     </div>
-    <!-- MOBILE NAV -->
-    <div class="mobile-nav">
-        <div class="mob-nav-item active" id="mob-dash" onclick="switchPage('dash')"><span>📊</span><span>DASH</span>
+    <!-- SIDEBAR -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">🚀 ROI<span>MASTER</span></div>
+            <button class="btn-new-project" onclick="addProject()">
+                <span>+</span> Novo Projeto
+            </button>
         </div>
-        <div class="mob-nav-item" id="mob-projects" onclick="switchPage('projects')">
-            <span>📁</span><span>PROJETOS</span></div>
+        <div class="sidebar-menu">
+            <div class="menu-item active" id="menu-dash" onclick="switchView('dash')">
+                <span>📊</span> Dashboard
+            </div>
+            <div class="menu-section-title">Seus Projetos</div>
+            <div id="sidebar-projects-list">
+                <!-- Projects will be listed here -->
+            </div>
+        </div>
+        <div style="padding: 10px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-dim);">
+            <span>⚙️ Configurações</span>
+        </div>
     </div>
     <div class="main-content">
-        <!-- PAGE: DASHBOARD -->
-        <div id="page-dash">
+        <!-- VIEW: DASHBOARD -->
+        <div id="view-dash">
             <div class="page-header">
                 <h1 style="font-weight: 800;">Visão Geral</h1>
                 <button class="btn-save" onclick="saveData()">SALVAR TUDO</button>
@@ -349,17 +382,17 @@
                     <div class="stat-value" id="g-roi">0.00x</div>
                 </div>
             </div>
-            <div class="stats-grid" style="grid-template-columns: 1fr 1fr;">
-                <div class="stat-card">
-                    <div class="stat-label">🛑 Despesas Fixas</div>
-                    <div id="fixed-list" style="margin-top: 10px;"></div>
+            <div class="project-grid">
+                <div class="card-box">
+                    <div class="card-title">🛑 Despesas Fixas</div>
+                    <div id="fixed-list"></div>
                     <button onclick="addFixed()"
-                        style="width: 100%; margin-top: 10px; background: transparent; border: 1px dashed #444; color: #888; padding: 8px; border-radius: 8px;">+
-                        Adicionar</button>
+                        style="width: 100%; margin-top: 10px; background: transparent; border: 1px dashed #444; color: #888; padding: 8px; border-radius: 8px; cursor: pointer;">+
+                        Adicionar Gasto Fixo</button>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-label">🎯 Meta de Lucro</div>
-                    <div style="display: flex; justify-content: space-between; margin-top: 10px; font-size: 0.8rem;">
+                <div class="card-box">
+                    <div class="card-title">🎯 Meta de Lucro</div>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.8rem;">
                         <span id="goal-label">Meta: R$ 5.000</span>
                         <span id="goal-percent">0%</span>
                     </div>
@@ -371,106 +404,121 @@
                 </div>
             </div>
         </div>
-        <!-- PAGE: PROJECTS -->
-        <div id="page-projects" class="hidden">
+        <!-- VIEW: PROJECT -->
+        <div id="view-project" class="hidden">
             <div class="page-header">
-                <h1 style="font-weight: 800;">Meus Projetos</h1>
+                <h1 id="project-title-display" style="font-weight: 800;">Projeto</h1>
                 <button class="btn-save" onclick="saveData()">SALVAR TUDO</button>
             </div>
-            <div class="tabs-scroll" id="project-tabs"></div>
-            <div id="project-content" class="project-container hidden">
-                <!-- NOTES -->
-                <div class="notes-area">
-                    <div class="stat-label">📝 Bloco de Notas do Projeto</div>
-                    <textarea id="project-notes" placeholder="Escreva anotações importantes sobre este projeto..."
-                        oninput="updateNotes(this.value)"></textarea>
-                </div>
-                <!-- ACCOUNTS -->
-                <div class="accounts-section">
-                    <div class="stat-label">💳 Contas de Anúncios</div>
-                    <div class="acc-pills-container" id="acc-pills"></div>
-                    <div id="acc-details" class="hidden">
-                        <div class="credentials-grid">
-                            <div class="field-group"><label>Nome da Conta</label><input type="text" id="acc-name"
-                                    oninput="updateAccField('name', this.value)"></div>
-                            <div class="field-group"><label>Gmail / Login</label><input type="text" id="acc-email"
-                                    oninput="updateAccField('email', this.value)"></div>
-                            <div class="field-group"><label>Senha</label><input type="text" id="acc-pass"
-                                    oninput="updateAccField('pass', this.value)"></div>
+            <div class="project-grid">
+                <div class="left-col">
+                    <!-- ACCOUNTS SECTION -->
+                    <div class="card-box">
+                        <div class="card-title">💳 Contas de Anúncios</div>
+                        <div class="acc-tabs" id="acc-tabs"></div>
+                        <div id="acc-content" class="hidden">
+                            <div class="credentials-block" style="margin-bottom: 15px;">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;">
+                                    <div class="field"><label>Nome da Conta</label><input type="text" id="acc-name"
+                                            oninput="updateAccField('name', this.value)"></div>
+                                    <div class="field"><label>Gmail / Login</label><input type="text" id="acc-email"
+                                            oninput="updateAccField('email', this.value)"></div>
+                                    <div class="field"><label>Senha</label><input type="text" id="acc-pass"
+                                            oninput="updateAccField('pass', this.value)"></div>
+                                </div>
+                            </div>
+                            <div class="table-wrapper">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Dia</th>
+                                            <th>Data</th>
+                                            <th>Gasto</th>
+                                            <th>Receita</th>
+                                            <th>Lucro</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="acc-table-body"></tbody>
+                                </table>
+                            </div>
+                            <button onclick="addRow()"
+                                style="width: 100%; padding: 10px; background: transparent; border: 1px dashed #444; color: #888; border-radius: 8px; margin-top: 10px; cursor: pointer;">+
+                                Adicionar Dia</button>
                         </div>
-                        <div class="table-wrapper">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th>Dia</th>
-                                        <th>Data</th>
-                                        <th>Gasto</th>
-                                        <th>Receita</th>
-                                        <th>Lucro</th>
-                                    </tr>
-                                </thead>
-                                <tbody id="acc-table-body"></tbody>
-                            </table>
-                        </div>
-                        <button onclick="addRow()"
-                            style="width: 100%; padding: 12px; background: transparent; border: 1px dashed #444; color: #888; border-radius: 10px; margin-top: 10px;">+
-                            Adicionar Dia</button>
-                        <button onclick="deleteAcc()"
-                            style="margin-top: 20px; color: #555; background: none; border: none; font-size: 0.75rem; cursor: pointer;">Excluir
-                            esta conta</button>
+                        <button onclick="addAcc()"
+                            style="width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; margin-top: 15px; cursor: pointer;">+
+                            Nova Conta Ads</button>
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="addAcc()"
-                        style="flex: 1; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700;">+
-                        Nova Conta Ads</button>
+                <div class="right-col">
+                    <!-- PROJECT NOTES -->
+                    <div class="card-box">
+                        <div class="card-title">📝 Bloco de Notas</div>
+                        <textarea id="project-notes" placeholder="Anotações do projeto..."
+                            oninput="updateNotes(this.value)"></textarea>
+                    </div>
+                    <!-- PROJECT CREDENTIALS -->
+                    <div class="card-box">
+                        <div class="card-title">🔑 Credenciais do Projeto</div>
+                        <div class="credentials-block">
+                            <div class="field"><label>Nome / Referência</label><input type="text" id="proj-cred-name"
+                                    oninput="updateProjCred('name', this.value)"></div>
+                            <div class="field"><label>Email Principal</label><input type="text" id="proj-cred-email"
+                                    oninput="updateProjCred('email', this.value)"></div>
+                            <div class="field"><label>Senha Principal</label><input type="text" id="proj-cred-pass"
+                                    oninput="updateProjCred('pass', this.value)"></div>
+                        </div>
+                    </div>
                     <button onclick="deleteProject()"
-                        style="flex: 1; padding: 12px; background: #222; color: #666; border: none; border-radius: 10px;">Excluir
+                        style="width: 100%; padding: 10px; color: #555; background: none; border: 1px solid #222; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">Excluir
                         Projeto</button>
                 </div>
             </div>
-            <button onclick="addProject()" id="btn-new-project"
-                style="width: 100%; padding: 20px; background: var(--surface); border: 2px dashed var(--border); color: var(--text-dim); border-radius: 16px; font-weight: 700; margin-top: 20px;">+
-                Criar Novo Projeto</button>
         </div>
     </div>
     <script>
         let state = {
-            activePage: 'dash',
-            activeProj: 0,
+            activeView: 'dash', // 'dash' or project index
             activeAcc: 0,
             goal: 5000,
-            fixed: [{ label: "ChatGPT", value: 99 }],
+            fixed: [{ label: "ChatGPT", value: 99 }, { label: "Proxy", value: 30 }],
             projects: [
                 {
                     name: "Projeto Exemplo",
                     notes: "",
+                    creds: { name: "", email: "", pass: "" },
                     accounts: [
                         { name: "Conta 01", email: "", pass: "", rows: [{ day: "1", date: "22/12", spend: 0, earn: 0 }] }
                     ]
                 }
             ]
         };
-        const saved = localStorage.getItem('roi_master_v4');
+        const saved = localStorage.getItem('roi_master_v5');
         if (saved) state = JSON.parse(saved);
         function init() { render(); }
-        function switchPage(p) {
-            state.activePage = p;
-            document.querySelectorAll('.menu-item, .mob-nav-item').forEach(i => i.classList.remove('active'));
-            if (p === 'dash') {
-                document.getElementById('side-dash').classList.add('active');
-                document.getElementById('mob-dash').classList.add('active');
-            } else {
-                document.getElementById('side-projects').classList.add('active');
-                document.getElementById('mob-projects').classList.add('active');
-            }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function switchView(v) {
+            state.activeView = v;
+            state.activeAcc = 0;
+            if (window.innerWidth <= 1024) toggleSidebar();
             render();
         }
         function render() {
-            document.getElementById('page-dash').classList.toggle('hidden', state.activePage !== 'dash');
-            document.getElementById('page-projects').classList.toggle('hidden', state.activePage !== 'projects');
-            if (state.activePage === 'dash') renderDash();
-            else renderProjects();
+            renderSidebar();
+            const isDash = state.activeView === 'dash';
+            document.getElementById('view-dash').classList.toggle('hidden', !isDash);
+            document.getElementById('view-project').classList.toggle('hidden', isDash);
+            if (isDash) renderDash();
+            else renderProject();
+        }
+        function renderSidebar() {
+            const list = document.getElementById('sidebar-projects-list');
+            list.innerHTML = state.projects.map((p, i) => `
+                <div class="menu-item ${state.activeView === i ? 'active' : ''}" onclick="switchView(${i})">
+                    <span>📁</span> ${p.name}
+                </div>
+            `).join('');
+            document.getElementById('menu-dash').classList.toggle('active', state.activeView === 'dash');
         }
         function renderDash() {
             let tSpend = 0, tEarn = 0;
@@ -494,54 +542,52 @@
             document.getElementById('goal-bar').style.width = `${p}%`;
             document.getElementById('goal-percent').innerText = `${p.toFixed(1)}%`;
         }
-        function renderProjects() {
-            const tabs = document.getElementById('project-tabs');
-            tabs.innerHTML = state.projects.map((p, i) => `
-                <div class="tab-pill ${state.activeProj === i ? 'active' : ''}" onclick="state.activeProj=${i};state.activeAcc=0;renderProjects()">${p.name}</div>
-            `).join('') + `<div class="tab-pill" onclick="addProject()">+ Novo</div>`;
-            const content = document.getElementById('project-content');
-            if (state.projects.length > 0) {
-                content.classList.remove('hidden');
-                const proj = state.projects[state.activeProj];
-                document.getElementById('project-notes').value = proj.notes;
-                const pills = document.getElementById('acc-pills');
-                pills.innerHTML = proj.accounts.map((a, i) => `
-                    <div class="acc-pill ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProjects()">${a.name || 'Sem Nome'}</div>
+        function renderProject() {
+            const proj = state.projects[state.activeView];
+            document.getElementById('project-title-display').innerText = proj.name;
+            document.getElementById('project-notes').value = proj.notes;
+            // Project Creds
+            document.getElementById('proj-cred-name').value = proj.creds?.name || "";
+            document.getElementById('proj-cred-email').value = proj.creds?.email || "";
+            document.getElementById('proj-cred-pass').value = proj.creds?.pass || "";
+            // Account Tabs
+            const tabs = document.getElementById('acc-tabs');
+            tabs.innerHTML = proj.accounts.map((a, i) => `
+                <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProject()">${a.name || 'Sem Nome'}</div>
+            `).join('');
+            const accContent = document.getElementById('acc-content');
+            if (proj.accounts.length > 0) {
+                accContent.classList.remove('hidden');
+                const acc = proj.accounts[state.activeAcc];
+                document.getElementById('acc-name').value = acc.name;
+                document.getElementById('acc-email').value = acc.email;
+                document.getElementById('acc-pass').value = acc.pass;
+                document.getElementById('acc-table-body').innerHTML = acc.rows.map((r, i) => `
+                    <tr>
+                        <td><input value="${r.day}" onchange="updateRow(${i},'day',this.value)"></td>
+                        <td><input value="${r.date}" onchange="updateRow(${i},'date',this.value)"></td>
+                        <td><input type="number" value="${r.spend}" onchange="updateRow(${i},'spend',this.value)"></td>
+                        <td><input type="number" value="${r.earn}" onchange="updateRow(${i},'earn',this.value)"></td>
+                        <td style="font-weight:800;color:${r.earn - r.spend >= 0 ? 'var(--success)' : 'var(--danger)'}">R$ ${(r.earn - r.spend).toLocaleString('pt-BR')}</td>
+                    </tr>
                 `).join('');
-                const accDetails = document.getElementById('acc-details');
-                if (proj.accounts.length > 0) {
-                    accDetails.classList.remove('hidden');
-                    const acc = proj.accounts[state.activeAcc];
-                    document.getElementById('acc-name').value = acc.name;
-                    document.getElementById('acc-email').value = acc.email;
-                    document.getElementById('acc-pass').value = acc.pass;
-                    document.getElementById('acc-table-body').innerHTML = acc.rows.map((r, i) => `
-                        <tr>
-                            <td><input value="${r.day}" onchange="updateRow(${i},'day',this.value)"></td>
-                            <td><input value="${r.date}" onchange="updateRow(${i},'date',this.value)"></td>
-                            <td><input type="number" value="${r.spend}" onchange="updateRow(${i},'spend',this.value)"></td>
-                            <td><input type="number" value="${r.earn}" onchange="updateRow(${i},'earn',this.value)"></td>
-                            <td style="font-weight:800;color:${r.earn - r.spend >= 0 ? 'var(--success)' : 'var(--danger)'}">R$ ${(r.earn - r.spend).toLocaleString('pt-BR')}</td>
-                        </tr>
-                    `).join('');
-                } else { accDetails.classList.add('hidden'); }
-            } else { content.classList.add('hidden'); }
+            } else { accContent.classList.add('hidden'); }
         }
-        function updateNotes(v) { state.projects[state.activeProj].notes = v; }
-        function updateAccField(f, v) { state.projects[state.activeProj].accounts[state.activeAcc][f] = v; renderProjects(); }
+        function updateNotes(v) { state.projects[state.activeView].notes = v; }
+        function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; }
+        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderProject(); renderSidebar(); }
         function updateRow(i, f, v) {
-            const acc = state.projects[state.activeProj].accounts[state.activeAcc];
+            const acc = state.projects[state.activeView].accounts[state.activeAcc];
             acc.rows[i][f] = (f === 'spend' || f === 'earn') ? parseFloat(v) || 0 : v;
-            renderProjects();
+            renderProject();
         }
-        function addRow() { state.projects[state.activeProj].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeProj].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProjects(); }
-        function addAcc() { state.projects[state.activeProj].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeProj].accounts.length - 1; renderProjects(); }
-        function deleteAcc() { if (confirm("Excluir conta?")) { state.projects[state.activeProj].accounts.splice(state.activeAcc, 1); state.activeAcc = 0; renderProjects(); } }
-        function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", accounts: [] }); state.activeProj = state.projects.length - 1; renderProjects(); } }
-        function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeProj, 1); state.activeProj = 0; renderProjects(); } }
+        function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); }
+        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); }
+        function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", creds: { name: "", email: "", pass: "" }, accounts: [] }); state.activeView = state.projects.length - 1; render(); } }
+        function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); } }
         function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); }
         function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); }
-        function saveData() { localStorage.setItem('roi_master_v4', JSON.stringify(state)); alert("Salvo! 🚀"); }
+        function saveData() { localStorage.setItem('roi_master_v5', JSON.stringify(state)); alert("Salvo com sucesso! 🚀"); }
         init();
     </script>
 </body>
