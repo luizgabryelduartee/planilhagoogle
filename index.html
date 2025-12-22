@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ROI MASTER - Gestão de Projetos</title>
+    <title>ROI MASTER v2 - Gestão de Projetos</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;700&display=swap"
@@ -36,7 +36,7 @@
             display: flex;
             min-height: 100vh;
         }
-        /* SIDEBAR (ChatGPT Style) */
+        /* SIDEBAR */
         .sidebar {
             width: var(--sidebar-width);
             background: var(--bg);
@@ -84,7 +84,6 @@
             overflow-y: auto;
             margin-top: 10px;
             scrollbar-width: thin;
-            scrollbar-color: var(--border) transparent;
         }
         .menu-section-title {
             font-size: 0.7rem;
@@ -116,6 +115,7 @@
         .menu-item.active {
             background: var(--surface-light);
             font-weight: 700;
+            border-left: 3px solid var(--primary);
         }
         /* MAIN CONTENT */
         .main-content {
@@ -218,7 +218,6 @@
             font-family: inherit;
             resize: none;
         }
-        /* CREDENTIALS BLOCK */
         .credentials-block {
             display: flex;
             flex-direction: column;
@@ -346,13 +345,11 @@
     </style>
 </head>
 <body>
-    <!-- MOBILE HEADER -->
     <div class="mobile-header">
         <button class="btn-menu-toggle" onclick="toggleSidebar()">☰</button>
         <div class="logo">🚀 ROI<span>MASTER</span></div>
         <div id="save-indicator-mob" class="save-badge">SALVO</div>
     </div>
-    <!-- SIDEBAR -->
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">🚀 ROI<span>MASTER</span></div>
@@ -365,12 +362,14 @@
                 <span>📊</span> Dashboard
             </div>
             <div class="menu-section-title">Seus Projetos</div>
-            <div id="sidebar-projects-list">
-                <!-- Projects will be listed here -->
-            </div>
+            <div id="sidebar-projects-list"></div>
         </div>
-        <div style="padding: 10px; border-top: 1px solid var(--border); font-size: 0.75rem; color: var(--text-dim);">
-            <span>⚙️ Configurações</span>
+        <div
+            style="padding: 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px;">
+            <button onclick="exportData()"
+                style="background:none; border:1px solid #333; color:#888; padding:8px; border-radius:6px; font-size:0.7rem; cursor:pointer;">💾
+                Baixar Backup</button>
+            <span style="font-size: 0.7rem; color: var(--text-dim);">⚙️ v2.0.1 - AutoSave ON</span>
         </div>
     </div>
     <div class="main-content">
@@ -434,7 +433,6 @@
             </div>
             <div class="project-grid">
                 <div class="left-col">
-                    <!-- ACCOUNTS SECTION -->
                     <div class="card-box">
                         <div class="card-title">💳 Contas de Anúncios</div>
                         <div class="acc-tabs" id="acc-tabs"></div>
@@ -473,13 +471,11 @@
                     </div>
                 </div>
                 <div class="right-col">
-                    <!-- PROJECT NOTES -->
                     <div class="card-box">
                         <div class="card-title">📝 Bloco de Notas</div>
                         <textarea id="project-notes" placeholder="Anotações do projeto..."
                             oninput="updateNotes(this.value)"></textarea>
                     </div>
-                    <!-- PROJECT CREDENTIALS -->
                     <div class="card-box">
                         <div class="card-title">🔑 Credenciais do Projeto</div>
                         <div class="credentials-block">
@@ -500,7 +496,7 @@
     </div>
     <script>
         let state = {
-            activeView: 'dash', // 'dash' or project index
+            activeView: 'dash',
             activeAcc: 0,
             goal: 5000,
             fixed: [{ label: "ChatGPT", value: 99 }, { label: "Proxy", value: 30 }],
@@ -515,23 +511,36 @@
                 }
             ]
         };
-        const saved = localStorage.getItem('roi_master_v5');
-        if (saved) state = JSON.parse(saved);
-        function init() { render(); }
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-        function switchView(v) {
-            state.activeView = v;
-            state.activeAcc = 0;
-            if (window.innerWidth <= 1024) toggleSidebar();
-            render();
+        function loadData() {
+            const saved = localStorage.getItem('roi_master_v5');
+            if (saved) {
+                try {
+                    state = JSON.parse(saved);
+                    console.log("Dados carregados com sucesso!");
+                } catch (e) {
+                    console.error("Erro ao carregar dados:", e);
+                }
+            }
+        }
+        function autoSave() {
+            localStorage.setItem('roi_master_v5', JSON.stringify(state));
+            showSaveIndicator();
+        }
+        function showSaveIndicator() {
+            ['save-indicator', 'save-indicator-proj', 'save-indicator-mob'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.classList.add('show');
+                    setTimeout(() => el.classList.remove('show'), 2000);
+                }
+            });
         }
         function render() {
             renderSidebar();
             const isDash = state.activeView === 'dash';
             document.getElementById('view-dash').classList.toggle('hidden', !isDash);
             document.getElementById('view-project').classList.toggle('hidden', isDash);
-            if (isDash) renderDash();
-            else renderProject();
+            if (isDash) renderDash(); else renderProject();
         }
         function renderSidebar() {
             const list = document.getElementById('sidebar-projects-list');
@@ -554,8 +563,8 @@
             document.getElementById('g-roi').innerText = `${roi.toFixed(2)}x`;
             document.getElementById('fixed-list').innerHTML = state.fixed.map((f, i) => `
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
-                    <input value="${f.label}" onchange="state.fixed[${i}].label=this.value;renderDash();autoSave()" style="background:none;border:none;color:#888;font-size:0.8rem;width:60%">
-                    <input type="number" value="${f.value}" onchange="state.fixed[${i}].value=parseFloat(this.value)||0;renderDash();autoSave()" style="background:none;border:none;color:var(--danger);font-weight:800;text-align:right;width:30%">
+                    <input value="${f.label}" oninput="state.fixed[${i}].label=this.value;autoSave()" style="background:none;border:none;color:#888;font-size:0.8rem;width:60%">
+                    <input type="number" value="${f.value}" oninput="state.fixed[${i}].value=parseFloat(this.value)||0;renderDash();autoSave()" style="background:none;border:none;color:var(--danger);font-weight:800;text-align:right;width:30%">
                 </div>
             `).join('');
             document.getElementById('goal-label').innerText = `Meta: R$ ${state.goal.toLocaleString('pt-BR')}`;
@@ -566,13 +575,12 @@
         }
         function renderProject() {
             const proj = state.projects[state.activeView];
+            if (!proj) { state.activeView = 'dash'; render(); return; }
             document.getElementById('project-title-display').innerText = proj.name;
-            document.getElementById('project-notes').value = proj.notes;
-            // Project Creds
+            document.getElementById('project-notes').value = proj.notes || "";
             document.getElementById('proj-cred-name').value = proj.creds?.name || "";
             document.getElementById('proj-cred-email').value = proj.creds?.email || "";
             document.getElementById('proj-cred-pass').value = proj.creds?.pass || "";
-            // Account Tabs
             const tabs = document.getElementById('acc-tabs');
             tabs.innerHTML = proj.accounts.map((a, i) => `
                 <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProject()">${a.name || 'Sem Nome'}</div>
@@ -580,16 +588,16 @@
             const accContent = document.getElementById('acc-content');
             if (proj.accounts.length > 0) {
                 accContent.classList.remove('hidden');
-                const acc = proj.accounts[state.activeAcc];
-                document.getElementById('acc-name').value = acc.name;
-                document.getElementById('acc-email').value = acc.email;
-                document.getElementById('acc-pass').value = acc.pass;
+                const acc = proj.accounts[state.activeAcc] || proj.accounts[0];
+                document.getElementById('acc-name').value = acc.name || "";
+                document.getElementById('acc-email').value = acc.email || "";
+                document.getElementById('acc-pass').value = acc.pass || "";
                 document.getElementById('acc-table-body').innerHTML = acc.rows.map((r, i) => `
                     <tr>
-                        <td><input value="${r.day}" onchange="updateRow(${i},'day',this.value)"></td>
-                        <td><input value="${r.date}" onchange="updateRow(${i},'date',this.value)"></td>
-                        <td><input type="number" value="${r.spend}" onchange="updateRow(${i},'spend',this.value)"></td>
-                        <td><input type="number" value="${r.earn}" onchange="updateRow(${i},'earn',this.value)"></td>
+                        <td><input value="${r.day}" oninput="updateRow(${i},'day',this.value)"></td>
+                        <td><input value="${r.date}" oninput="updateRow(${i},'date',this.value)"></td>
+                        <td><input type="number" value="${r.spend}" oninput="updateRow(${i},'spend',this.value)"></td>
+                        <td><input type="number" value="${r.earn}" oninput="updateRow(${i},'earn',this.value)"></td>
                         <td style="font-weight:800;color:${r.earn - r.spend >= 0 ? 'var(--success)' : 'var(--danger)'}">R$ ${(r.earn - r.spend).toLocaleString('pt-BR')}</td>
                     </tr>
                 `).join('');
@@ -597,12 +605,11 @@
         }
         function updateNotes(v) { state.projects[state.activeView].notes = v; autoSave(); }
         function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; autoSave(); }
-        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderProject(); renderSidebar(); autoSave(); }
+        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderSidebar(); autoSave(); }
         function updateRow(i, f, v) {
             const acc = state.projects[state.activeView].accounts[state.activeAcc];
             acc.rows[i][f] = (f === 'spend' || f === 'earn') ? parseFloat(v) || 0 : v;
-            renderProject();
-            autoSave();
+            renderProject(); autoSave();
         }
         function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); autoSave(); }
         function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
@@ -610,25 +617,19 @@
         function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); autoSave(); } }
         function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); autoSave(); }
         function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); autoSave(); }
-        function autoSave() {
-            localStorage.setItem('roi_master_v5', JSON.stringify(state));
-            showSaveIndicator();
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function switchView(v) { state.activeView = v; state.activeAcc = 0; if (window.innerWidth <= 1024) toggleSidebar(); render(); }
+        function saveData() { autoSave(); alert("Dados sincronizados! 🚀"); }
+        function exportData() {
+            const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `roi-master-backup-${new Date().toISOString().slice(0, 10)}.json`;
+            a.click();
         }
-        function showSaveIndicator() {
-            const indicators = ['save-indicator', 'save-indicator-proj', 'save-indicator-mob'];
-            indicators.forEach(id => {
-                const el = document.getElementById(id);
-                if (el) {
-                    el.classList.add('show');
-                    setTimeout(() => el.classList.remove('show'), 2000);
-                }
-            });
-        }
-        function saveData() {
-            localStorage.setItem('roi_master_v5', JSON.stringify(state));
-            alert("Dados sincronizados com sucesso! 🚀");
-        }
-        init();
+        loadData();
+        render();
     </script>
 </body>
 </html>
