@@ -591,6 +591,7 @@
             tabs.innerHTML = proj.accounts.map((a, i) => `
                 <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProject()">${a.name || 'Sem Nome'}</div>
             `).join('');
+            const accContent = document.getElementById('acc-content');
             if (proj.accounts.length > 0) {
                 accContent.classList.remove('hidden');
                 const acc = proj.accounts[state.activeAcc]; // No fallback here, clamping handled above
