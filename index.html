@@ -583,7 +583,10 @@
                 state.activeAcc = 0;
             }
             document.getElementById('project-title-display').innerText = proj.name;
-            document.getElementById('project-notes').value = proj.notes || "";
+            // Acc-specific Notes
+            const activeAccObj = proj.accounts[state.activeAcc];
+            document.getElementById('project-notes').value = activeAccObj ? (activeAccObj.notes || "") : "";
+            document.getElementById('project-notes').placeholder = activeAccObj ? `Anotações da conta ${activeAccObj.name}...` : "Selecione uma conta para anotar...";
             document.getElementById('proj-cred-name').value = proj.creds?.name || "";
             document.getElementById('proj-cred-email').value = proj.creds?.email || "";
             document.getElementById('proj-cred-pass').value = proj.creds?.pass || "";
@@ -609,7 +612,13 @@
                 `).join('');
             } else { accContent.classList.add('hidden'); }
         }
-        function updateNotes(v) { state.projects[state.activeView].notes = v; autoSave(); }
+        function updateNotes(v) {
+            const proj = state.projects[state.activeView];
+            if (proj && proj.accounts[state.activeAcc]) {
+                proj.accounts[state.activeAcc].notes = v;
+                autoSave();
+            }
+        }
         function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; autoSave(); }
         function updateAccField(f, v) {
             const proj = state.projects[state.activeView];
@@ -629,7 +638,7 @@
             }
         }
         function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); autoSave(); }
-        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
+        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", notes: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
         function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", creds: { name: "", email: "", pass: "" }, accounts: [] }); state.activeView = state.projects.length - 1; render(); autoSave(); } }
         function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); autoSave(); } }
         function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); autoSave(); }
