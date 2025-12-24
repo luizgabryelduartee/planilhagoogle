@@ -515,8 +515,20 @@
             const saved = localStorage.getItem('roi_master_v5');
             if (saved) {
                 try {
-                    state = JSON.parse(saved);
-                    console.log("Dados carregados com sucesso!");
+                    const parsed = JSON.parse(saved);
+                    // Critical: Break all potential object references (Nuclear Reference Breaker)
+                    state = JSON.parse(JSON.stringify(parsed));
+                    // Maintenance: Ensure all accounts have a proper structure
+                    state.projects.forEach(p => {
+                        if (p.accounts) {
+                            p.accounts.forEach(acc => {
+                                if (!acc.creds) acc.creds = { name: "", email: "", pass: "" };
+                                if (!acc.notes) acc.notes = "";
+                                if (!acc.rows) acc.rows = [];
+                            });
+                        }
+                    });
+                    console.log("Dados carregados e isolados com sucesso!");
                 } catch (e) {
                     console.error("Erro ao carregar dados:", e);
                 }
@@ -601,7 +613,7 @@
             }
             const tabs = document.getElementById('acc-tabs');
             tabs.innerHTML = proj.accounts.map((a, i) => `
-                <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProject()">${a.name || 'Sem Nome'}</div>
+                <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="switchAcc(${i})">${a.name || 'Sem Nome'}</div>
             `).join('');
             const accContent = document.getElementById('acc-content');
             if (proj.accounts.length > 0) {
@@ -655,15 +667,38 @@
             }
         }
         function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); autoSave(); }
-        function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", notes: "", creds: { name: "", email: "", pass: "" }, rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
+        function addAcc() {
+            const proj = state.projects[state.activeView];
+            if (!proj) return;
+            // Create a completely detached object
+            const newAcc = {
+                name: "Nova Conta " + (proj.accounts.length + 1),
+                email: "",
+                pass: "",
+                notes: "",
+                creds: { name: "", email: "", pass: "" },
+                rows: [{ day: "1", date: "", spend: 0, earn: 0 }]
+            };
+            proj.accounts.push(newAcc);
+            state.activeAcc = proj.accounts.length - 1;
+            // Force break any potential remaining reference
+            state = JSON.parse(JSON.stringify(state));
+            render();
+            autoSave();
+        }
         function addProject() { const n = prompt("Nome do Projeto:"); if (n) { state.projects.push({ name: n, notes: "", creds: { name: "", email: "", pass: "" }, accounts: [] }); state.activeView = state.projects.length - 1; render(); autoSave(); } }
         function deleteProject() { if (confirm("Excluir projeto?")) { state.projects.splice(state.activeView, 1); state.activeView = 'dash'; render(); autoSave(); } }
         function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); autoSave(); }
         function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); autoSave(); }
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function switchAcc(i) {
+            state.activeAcc = i;
+            render(); // Full render to ensure all sections refresh
+            autoSave();
+        }
         function switchView(v) {
             state.activeView = v;
-            state.activeAcc = 0; // Reset account selection when switching projects
+            state.activeAcc = 0;
             if (window.innerWidth <= 1024) toggleSidebar();
             render();
             autoSave();
