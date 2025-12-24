@@ -576,6 +576,12 @@
         function renderProject() {
             const proj = state.projects[state.activeView];
             if (!proj) { state.activeView = 'dash'; render(); return; }
+            // Ensure activeAcc is valid for this project
+            if (proj.accounts.length > 0) {
+                if (state.activeAcc >= proj.accounts.length) state.activeAcc = 0;
+            } else {
+                state.activeAcc = 0;
+            }
             document.getElementById('project-title-display').innerText = proj.name;
             document.getElementById('project-notes').value = proj.notes || "";
             document.getElementById('proj-cred-name').value = proj.creds?.name || "";
@@ -585,10 +591,9 @@
             tabs.innerHTML = proj.accounts.map((a, i) => `
                 <div class="acc-tab ${state.activeAcc === i ? 'active' : ''}" onclick="state.activeAcc=${i};renderProject()">${a.name || 'Sem Nome'}</div>
             `).join('');
-            const accContent = document.getElementById('acc-content');
             if (proj.accounts.length > 0) {
                 accContent.classList.remove('hidden');
-                const acc = proj.accounts[state.activeAcc] || proj.accounts[0];
+                const acc = proj.accounts[state.activeAcc]; // No fallback here, clamping handled above
                 document.getElementById('acc-name').value = acc.name || "";
                 document.getElementById('acc-email').value = acc.email || "";
                 document.getElementById('acc-pass').value = acc.pass || "";
@@ -605,11 +610,22 @@
         }
         function updateNotes(v) { state.projects[state.activeView].notes = v; autoSave(); }
         function updateProjCred(f, v) { if (!state.projects[state.activeView].creds) state.projects[state.activeView].creds = {}; state.projects[state.activeView].creds[f] = v; autoSave(); }
-        function updateAccField(f, v) { state.projects[state.activeView].accounts[state.activeAcc][f] = v; renderSidebar(); autoSave(); }
+        function updateAccField(f, v) {
+            const proj = state.projects[state.activeView];
+            if (proj && proj.accounts[state.activeAcc]) {
+                proj.accounts[state.activeAcc][f] = v;
+                renderSidebar();
+                autoSave();
+            }
+        }
         function updateRow(i, f, v) {
-            const acc = state.projects[state.activeView].accounts[state.activeAcc];
-            acc.rows[i][f] = (f === 'spend' || f === 'earn') ? parseFloat(v) || 0 : v;
-            renderProject(); autoSave();
+            const proj = state.projects[state.activeView];
+            if (proj && proj.accounts[state.activeAcc]) {
+                const acc = proj.accounts[state.activeAcc];
+                acc.rows[i][f] = (f === 'spend' || f === 'earn') ? parseFloat(v) || 0 : v;
+                renderProject();
+                autoSave();
+            }
         }
         function addRow() { state.projects[state.activeView].accounts[state.activeAcc].rows.push({ day: (state.projects[state.activeView].accounts[state.activeAcc].rows.length + 1).toString(), date: "", spend: 0, earn: 0 }); renderProject(); autoSave(); }
         function addAcc() { state.projects[state.activeView].accounts.push({ name: "Nova Conta", email: "", pass: "", rows: [{ day: "1", date: "", spend: 0, earn: 0 }] }); state.activeAcc = state.projects[state.activeView].accounts.length - 1; renderProject(); autoSave(); }
@@ -618,7 +634,13 @@
         function addFixed() { state.fixed.push({ label: "Novo", value: 0 }); renderDash(); autoSave(); }
         function updateGoal(v) { state.goal = parseFloat(v) || 0; renderDash(); autoSave(); }
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
-        function switchView(v) { state.activeView = v; state.activeAcc = 0; if (window.innerWidth <= 1024) toggleSidebar(); render(); }
+        function switchView(v) {
+            state.activeView = v;
+            state.activeAcc = 0; // Reset account selection when switching projects
+            if (window.innerWidth <= 1024) toggleSidebar();
+            render();
+            autoSave();
+        }
         function saveData() { autoSave(); alert("Dados sincronizados! 🚀"); }
         function exportData() {
             const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
